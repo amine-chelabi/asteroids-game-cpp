@@ -194,7 +194,12 @@ public:
 
     void updateGame(float dt)
     {
-        ship.update(dt);
+        physics::Input input;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) input.x -= 1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) input.x += 1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) input.y -= 1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) input.y += 1;
+        ship.update(dt, input);
 
         level = 1 + score / 30;
 

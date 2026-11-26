@@ -1,6 +1,7 @@
 #pragma once
 #include "Common.hpp"
 #include "Graphics.hpp"
+#include "Physics.hpp"
 
 class Spaceship
 {
@@ -16,68 +17,16 @@ public:
     float invulnerability = 0.f;
     float fireCooldown = 0.f;
 
-    void update(float dt)
+    void update(float dt, physics::Input input)
     {
-        sf::Vector2f direction(0, 0);
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)
-            || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            direction.x -= 1;
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
-            || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            direction.x += 1;
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)
-            || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            direction.y -= 1;
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)
-            || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            direction.y += 1;
-
-        float length = std::sqrt(
-            direction.x * direction.x
-            + direction.y * direction.y
-        );
-
-        if (length > 0)
-            direction /= length;
-
-        position += direction * 360.f * dt;
-
-        position.x = std::clamp(
-            position.x, 55.f, WIDTH - 55.f
-        );
-
-        position.y = std::clamp(
-            position.y, 135.f, HEIGHT - 65.f
-        );
-
-        invulnerability = std::max(
-            0.f, invulnerability - dt
-        );
-
-        fireCooldown = std::max(
-            0.f, fireCooldown - dt
-        );
+        physics::moveShip(position.x, position.y, input, dt, WIDTH, HEIGHT);
+        physics::tickCooldown(invulnerability, dt);
+        physics::tickCooldown(fireCooldown, dt);
     }
 
     bool damage()
     {
-        if (invulnerability > 0)
-            return false;
-
-        invulnerability = 1.5f;
-        --energy;
-
-        if (energy <= 0)
-        {
-            --lives;
-            energy = lives > 0 ? 3 : 0;
-        }
-
-        return true;
+        return physics::damage(lives, energy, invulnerability);
     }
 
     void draw(
