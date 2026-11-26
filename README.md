@@ -1,76 +1,103 @@
 
-# Asteroids — Space Survival Game
+# Asteroids — C++ Software Engineering
 
-A graphical 2D arcade game developed in modern C++17
-using SFML 2.6.
+![C++17](https://img.shields.io/badge/C++-17-00599C)
+![SFML](https://img.shields.io/badge/SFML-2.6-green)
+![CMake](https://img.shields.io/badge/Build-CMake-blue)
+![CI](https://github.com/amine-chelabi/asteroids-game-cpp/actions/workflows/ci.yml/badge.svg)
 
 ## Overview
 
-Originally developed as an academic C++ project in 2023,
-the game was subsequently redesigned with a graphical
-interface, improved game mechanics and modern C++
-programming practices.
+Asteroids is an academic C++ project originally developed
+during my Bachelor's degree at the Université de Haute-Alsace.
 
-The player controls a spaceship, avoids incoming
-asteroids and destroys them using laser cannons.
+The project implements a 2D interactive simulation with
+modular software architecture, geometric collision detection,
+spatial partitioning and automated testing.
 
-## Features
+## Technical Features
 
-- Interactive graphical main menu
-- Custom spaceship design with animated thrusters
-- Animated starfield background
-- Randomly generated rotating asteroids
-- Dual laser cannons
-- Collision detection
-- Particle-based explosion effects
-- Lives and shield energy management
-- Progressive difficulty
-- Pause and resume functionality
-- Persistent high-score system
+- Modern C++17 and object-oriented programming.
+- Modular software architecture.
+- Real-time 2D rendering with SFML.
+- Physics calculations independent of graphical rendering.
+- Finite state machine for game state management.
+- Spatial hash grid for efficient collision detection.
+- Hybrid collision detection strategy.
+- Persistent high-score management.
+- Automated unit tests with CTest.
+- Continuous integration with GitHub Actions.
+- Reproducible performance benchmarks.
 
-## Screenshots
+## Performance Optimization
 
-### Main Menu
+Collision detection was evaluated by comparing an exhaustive
+search algorithm with a spatial hash grid.
 
-![Main Menu](docs/menu.png)
+### Benchmark Configuration
 
-### Gameplay
+- 5,000 asteroids
+- 5,000 projectiles
+- 11 repetitions
+- Median execution time
+- Fedora Linux
+- GCC 14.2.1
 
-![Gameplay](docs/gameplay.png)
+### Results
+
+| Metric | Exhaustive | Spatial Grid |
+|---|---:|---:|
+| Runtime | 79.490 ms | 1.324 ms |
+| Comparisons | 21,131,033 | 3,778 |
+| Detected matches | 775 | 775 |
+
+**Measured speedup: 60.04x**
+
+**Reduction in execution time: 98.33%**
+
+**Reduction in comparisons: 99.982%**
+
+Both algorithms produced identical collision results
+in the evaluated scenario.
+
+These measurements concern a synthetic collision benchmark,
+not the overall game frame rate.
+
+## Software Architecture
+
+```mermaid
+flowchart TD
+    Main[Application Entry Point] --> Game
+    Game --> Spaceship
+    Game --> Asteroid
+    Game --> Laser
+    Game --> Particles
+    Game --> HighScores
+    Game --> SpatialGrid
+    Spaceship --> Physics
+    Asteroid --> Physics
+    Laser --> Physics
+    SpatialGrid --> Collision
+```
+
+See [Architecture Documentation](docs/architecture.md)
+for additional technical details.
 
 ## Technologies
 
-- C++17
-- SFML 2.6
-- CMake
-- Object-oriented programming
-- Standard Template Library (STL)
-- Linux / Fedora
-- Git
-
-## Project Structure
-
-```text
-asteroids-game-cpp/
-├── src/
-│   └── main.cpp
-├── assets/
-│   └── font.ttf
-├── docs/
-│   ├── menu.png
-│   └── gameplay.png
-├── CMakeLists.txt
-├── .gitignore
-└── README.md
-```
+| Category | Technologies |
+|---|---|
+| Programming | C++17, STL, OOP |
+| Graphics | SFML |
+| Algorithms | Spatial hashing, geometric collisions |
+| Build system | CMake |
+| Testing | CTest |
+| Benchmarking | std::chrono |
+| Version control | Git, GitHub |
+| CI/CD | GitHub Actions |
+| Environment | Linux, Fedora, GCC |
 
 ## Installation
-
-### Requirements
-
-- C++17-compatible compiler
-- CMake 3.16 or later
-- SFML 2.6
 
 ### Fedora
 
@@ -81,42 +108,82 @@ sudo dnf install gcc-c++ cmake SFML-devel
 ### Build
 
 ```bash
-cmake -S . -B build
-cmake --build build -j4
+git clone https://github.com/amine-chelabi/asteroids-game-cpp.git
+cd asteroids-game-cpp
+
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
 ```
 
 ### Run
 
 ```bash
-./build/asteroids
+cd build
+./asteroids
 ```
 
-## Controls
+## Automated Tests
+
+```bash
+ctest --test-dir build --output-on-failure
+```
+
+## Performance Benchmarks
+
+```bash
+cmake -S . -B build-bench \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_GAME=OFF \
+    -DBUILD_BENCHMARKS=ON
+
+cmake --build build-bench --parallel
+
+./build-bench/benchmark_collision
+./build-bench/benchmark_spatial
+```
+
+## Game Controls
 
 | Key | Action |
-|-----|--------|
-| Arrow keys / WASD | Move spaceship |
-| Space / B | Fire lasers |
-| P | Pause / Resume |
-| Q | Return to menu |
-| Enter | Confirm |
-| Mouse | Menu navigation |
+|---|---|
+| Arrow keys / WASD | Move |
+| Space | Fire |
+| P | Pause |
+| Q | Return to main menu |
 
-## Technical Highlights
+## Memory Safety and Software Validation
 
-- Object-oriented game architecture
-- Frame-rate-independent movement using delta time
-- Procedural spaceship and asteroid rendering
-- Real-time collision detection
-- Particle animation system
-- Automatic memory management using STL containers
-- File-based score persistence
-- CMake build configuration
+Memory analysis and runtime validation were performed
+on Fedora Linux using Valgrind, AddressSanitizer (ASan)
+and UndefinedBehaviorSanitizer (UBSan).
+
+### Valgrind Results
+
+| Metric | Result |
+|---|---:|
+| Memory allocations | 28,183 |
+| Memory deallocations | 28,183 |
+| Memory leaks | 0 bytes |
+| Detected errors | 0 |
+
+### Sanitizer Results
+
+| Test suite | Status |
+|---|---|
+| Collision detection | Passed |
+| Physics calculations | Passed |
+| Spatial partitioning | Passed |
+
+All three test suites passed with ASan and UBSan enabled.
+
+Valgrind validation was performed on the spatial grid
+test suite. Results do not cover the full graphical application.
 
 ## Author
 
 **Amine CHELABI**
 
-Academic project developed as part of my Bachelor's
-degree in Electronics, Electrical Energy and Automation
-at the University of Haute-Alsace (UHA), France.
+Computer Vision, Artificial Intelligence
+and Scientific Software Development.
+
+Academic project — Université de Haute-Alsace.
