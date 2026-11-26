@@ -10,6 +10,8 @@ find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
 
 add_executable(asteroids src/main.cpp)
 
+target_include_directories(asteroids PRIVATE include)
+
 target_link_libraries(asteroids PRIVATE
     sfml-graphics
     sfml-window
@@ -22,3 +24,10 @@ target_compile_options(asteroids PRIVATE
 )
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
+
+include(CTest)
+if(BUILD_TESTING)
+    add_executable(test_collision tests/test_collision.cpp)
+    target_include_directories(test_collision PRIVATE include)
+    add_test(NAME collision COMMAND test_collision)
+endif()
