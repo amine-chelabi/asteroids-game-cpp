@@ -1,0 +1,26 @@
+# Build files
+build/
+*.o
+*.exe
+*.out
+
+# Executables
+asteroids
+asteroids_sfml
+
+# Local scores
+point.txt
+
+# Legacy versions
+legacy/
+jeux_asteroides_v1.cpp
+jeux_asteroides_beau_backup.cpp
+terminal.hpp
+getch(1).h
+kbhit(1).h
+Asteroides.pptx
+
+# Editor files
+.vscode/
+.idea/
+*~
