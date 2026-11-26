@@ -24,3 +24,6 @@ Asteroides.pptx
 .vscode/
 .idea/
 *~
+
+# CMake build directories
+/build-*/

@@ -1,0 +1,5 @@
+#include "SpatialGrid.hpp"
+#include <chrono>
+#include <iostream>
+#include <random>
+int main(){using namespace spatial; std::mt19937 rng(42);std::uniform_real_distribution<float> d(-5000,5000),r(18,48);std::vector<Circle> c;std::vector<Point> p;for(int i=0;i<5000;++i){c.push_back({d(rng),d(rng),r(rng)});p.push_back({d(rng),d(rng)});}std::vector<double> times[2];auto ref=match(c,p,false);auto fast=match(c,p,true);if(ref.matches!=fast.matches)return 1;for(int k=0;k<11;++k)for(int z=0;z<2;++z){int mode=(k+z)%2;auto t=std::chrono::steady_clock::now();auto result=match(c,p,mode);auto end=std::chrono::steady_clock::now();if(result.matches!=ref.matches)return 2;times[mode].push_back(std::chrono::duration<double,std::milli>(end-t).count());}for(auto& t:times)std::sort(t.begin(),t.end());std::cout<<"Asteroids: 5000 | Lasers: 5000 | Repetitions: 11\nIdentical matches: "<<ref.matches.size()<<"\nExhaustive comparisons: "<<ref.comparisons<<"\nGrid comparisons: "<<fast.comparisons<<"\nExhaustive median: "<<times[0][5]<<" ms\nGrid median: "<<times[1][5]<<" ms\nSpeedup: "<<times[0][5]/times[1][5]<<"x\n";}
