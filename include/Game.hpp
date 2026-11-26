@@ -9,6 +9,7 @@
 #include "HighScores.hpp"
 #include "Button.hpp"
 #include "Collision.hpp"
+#include "SpatialGrid.hpp"
 
 enum class State
 {
@@ -241,45 +242,25 @@ public:
         for (auto& asteroid : asteroids)
             asteroid.update(dt);
 
-        // Laser / asteroid collisions
-
-        for (std::size_t i = 0; i < asteroids.size();)
-        {
-            bool destroyed = false;
-
-            for (std::size_t j = 0; j < lasers.size(); ++j)
-            {
-                if (collision::overlaps(asteroids[i].position.x, asteroids[i].position.y,
-                    lasers[j].position.x, lasers[j].position.y, asteroids[i].radius))
-                {
-                    particles.explode(
-                        asteroids[i].position,
-                        GOLD,
-                        35
-                    );
-
-                    particles.explode(
-                        asteroids[i].position,
-                        RED,
-                        12
-                    );
-
-                    lasers.erase(lasers.begin() + j);
-
-                    asteroids.erase(
-                        asteroids.begin() + i
-                    );
-
-                    score += 10;
-                    destroyed = true;
-
-                    break;
-                }
-            }
-
-            if (!destroyed)
-                ++i;
+        // Spatial broad phase, preserving original collision priority.
+        std::vector<spatial::Circle> circles;
+        std::vector<spatial::Point> points;
+        circles.reserve(asteroids.size()); points.reserve(lasers.size());
+        for (const auto& a : asteroids) circles.push_back({a.position.x,a.position.y,a.radius});
+        for (const auto& l : lasers) points.push_back({l.position.x,l.position.y});
+        const auto hits = spatial::match(circles, points, circles.size() * points.size() >= 4096);
+        std::vector<bool> deadAsteroids(asteroids.size()), deadLasers(lasers.size());
+        for (const auto& hit : hits.matches) {
+            const auto pos = asteroids[hit.asteroid].position;
+            particles.explode(pos, GOLD, 35);
+            particles.explode(pos, RED, 12);
+            deadAsteroids[hit.asteroid] = true;
+            deadLasers[hit.laser] = true;
+            score += 10;
         }
+        std::size_t ai=0, li=0;
+        asteroids.erase(std::remove_if(asteroids.begin(), asteroids.end(), [&](const Asteroid&){ return deadAsteroids[ai++]; }), asteroids.end());
+        lasers.erase(std::remove_if(lasers.begin(), lasers.end(), [&](const Laser&){ return deadLasers[li++]; }), lasers.end());
 
         // Ship / asteroid collisions
 
