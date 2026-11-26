@@ -151,6 +151,34 @@ cmake --build build-bench --parallel
 | P | Pause |
 | Q | Return to main menu |
 
+## Memory Safety and Software Validation
+
+Memory analysis and runtime validation were performed
+on Fedora Linux using Valgrind, AddressSanitizer (ASan)
+and UndefinedBehaviorSanitizer (UBSan).
+
+### Valgrind Results
+
+| Metric | Result |
+|---|---:|
+| Memory allocations | 28,183 |
+| Memory deallocations | 28,183 |
+| Memory leaks | 0 bytes |
+| Detected errors | 0 |
+
+### Sanitizer Results
+
+| Test suite | Status |
+|---|---|
+| Collision detection | Passed |
+| Physics calculations | Passed |
+| Spatial partitioning | Passed |
+
+All three test suites passed with ASan and UBSan enabled.
+
+Valgrind validation was performed on the spatial grid
+test suite. Results do not cover the full graphical application.
+
 ## Author
 
 **Amine CHELABI**
