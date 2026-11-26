@@ -1,5 +1,6 @@
 #pragma once
 #include "Common.hpp"
+#include "Physics.hpp"
 
 struct Laser
 {
@@ -7,7 +8,7 @@ struct Laser
 
     void update(float dt)
     {
-        position.y -= 850.f * dt;
+        physics::moveLaser(position.y, dt);
     }
 
     void draw(sf::RenderWindow& window) const
