@@ -117,9 +117,6 @@ cmake --build build -j4
 
 **Amine CHELABI**
 
-Computer Vision, Artificial Intelligence and
-Scientific Software Development.
-
-Academic project originally developed in 2023
-and modernized in 2026 with AI-assisted development.
-
+Academic project developed as part of my Bachelor's
+degree in Electronics, Electrical Energy and Automation
+at the University of Haute-Alsace (UHA), France.
