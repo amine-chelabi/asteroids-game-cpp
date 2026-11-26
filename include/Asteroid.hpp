@@ -1,5 +1,6 @@
 #pragma once
 #include "Common.hpp"
+#include "Physics.hpp"
 
 class Asteroid
 {
@@ -89,18 +90,8 @@ public:
 
     void update(float dt)
     {
-        position.y += speed * dt;
-        position.x += drift * dt;
-
-        rotation += rotationSpeed * dt;
-
-        if (position.x < radius) {
-            position.x = radius;
-            drift = std::abs(drift);
-        } else if (position.x > WIDTH - radius) {
-            position.x = WIDTH - radius;
-            drift = -std::abs(drift);
-        }
+        physics::moveAsteroid(position.x, position.y, rotation, drift,
+                              speed, rotationSpeed, radius, WIDTH, dt);
     }
 
     void draw(sf::RenderWindow& window) const
